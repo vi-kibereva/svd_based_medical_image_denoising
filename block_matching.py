@@ -13,7 +13,8 @@ def block_matching(matrix: np.ndarray[tuple[int, int], np.dtype[np.int32]],
 
     result = np.empty(blocks.shape[:2], dtype=object)
 
-    results = Parallel(n_jobs=-1)(
+    with Parallel(n_jobs=-1) as parallel:
+        results = parallel(
             delayed(process_column)(j , blocks, windows, threshold, block_size)
             for j in range(blocks.shape[1])
     )
@@ -30,14 +31,22 @@ def process_column(column_idx: int, blocks, windows, threshold, block_size):
     return column_results
 
 
-def match_block(target: np.ndarray[tuple[int, int], np.dtype[np.int32]], 
-                window: np.ndarray[tuple[int, int], np.dtype[np.int32]], 
-                threshold: int, block_size: int = 5) -> np.ndarray[tuple[int, int], np.dtype[np.int32]]:
+def match_block(target: np.ndarray, window: np.ndarray, threshold: int, block_size: int = 5) -> np.ndarray:
     candidates = npw.sliding_window_view(window, window_shape=(block_size, block_size))
+    
     diff = candidates - target
-    dist = np.sum(np.square(diff), axis = (-2, -1))
+    dist = np.mean(np.square(diff), axis=(-2, -1))
+    
     mask = dist < threshold ** 2
     matched_blocks = candidates[mask]
+    
+    target_col = target.reshape(-1, 1)
+    
     if matched_blocks.shape[0] == 0:
-        return target.reshape(-1, 1, order = "F")
-    return matched_blocks.reshape(matched_blocks.shape[0], -1).T
+        return target_col
+        
+    matches_cols = matched_blocks.reshape(matched_blocks.shape[0], -1).T
+    
+    M_noisy = np.hstack((target_col, matches_cols))
+    
+    return M_noisy
