@@ -41,5 +41,3 @@ def match_block(target: np.ndarray[tuple[int, int], np.dtype[np.int32]],
     if matched_blocks.shape[0] == 0:
         return target.reshape(-1, 1, order = "F")
     return matched_blocks.reshape(matched_blocks.shape[0], -1).T
-
-
