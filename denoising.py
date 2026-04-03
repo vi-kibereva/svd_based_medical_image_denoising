@@ -4,19 +4,39 @@ from joblib import Parallel, delayed
 import matplotlib.pyplot as plt
 
 
-def denoising(res:  np.ndarray[tuple[int, int], np.dtype[np.object_]], noise_tresh: float = 850.0): #treshhold probably should be counted energybased
+def denoising(res:  np.ndarray[tuple[int, int], np.dtype[np.object_]], sigma): #treshhold probably should be counted energybased
     res_clean = np.empty_like(res)
     for i in range(res.shape[0]):
         for j in range(res.shape[1]):
             M = res[i, j]
             U, Sigma, Vt = np.linalg.svd(M, full_matrices=False) # це якщо модна з бібліотеки взяти 
-            Sigma[Sigma < noise_tresh] = 0
-            # Sigma[3:] = 0
-            # res_clean[i, j] = (U * Sigma) @ Vt
+            # n = max(M.shape)
+            # noise_tresh = sigma*np.sqrt(2*np.log(n))
+
+            # noise_tresh*= 2.5
+
+            # Sigma[Sigma < noise_tresh] = 0
+
+            N_patches = M.shape[0]
+            Patch_size_squared = M.shape[1]
+            
+            thresh = sigma * np.sqrt(max(N_patches, Patch_size_squared))
+            
+            safe_coefficient = 10
+            thresh *= safe_coefficient
+
+            safe_indices = 1
+            
+            for idx in range(safe_indices, len(Sigma)):
+                if Sigma[idx] < thresh:
+                    Sigma[idx] = 0
+
             res_clean[i, j] = (U @ np.diag(Sigma)) @ Vt
 
     return res_clean
 
+
+# with procent of sigmas
 # def denoising(res: np.ndarray, energy_ratio: float = 0.7): 
 #     res_clean = np.empty_like(res)
     
