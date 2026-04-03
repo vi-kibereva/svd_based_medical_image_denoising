@@ -10,13 +10,26 @@ def denoising(res:  np.ndarray[tuple[int, int], np.dtype[np.object_]], sigma): #
         for j in range(res.shape[1]):
             M = res[i, j]
             U, Sigma, Vt = np.linalg.svd(M, full_matrices=False) # це якщо модна з бібліотеки взяти 
+            # n = max(M.shape)
+            # noise_tresh = sigma*np.sqrt(2*np.log(n))
 
-            n = max(M.shape)
-            noise_tresh = Sigma*np.sqrt(2*np.log(n))
+            # noise_tresh*= 2.5
 
-            noise_tresh*= 2.5
+            # Sigma[Sigma < noise_tresh] = 0
 
-            Sigma[Sigma < noise_tresh] = 0
+            N_patches = M.shape[0]
+            Patch_size_squared = M.shape[1]
+            
+            thresh = sigma * np.sqrt(max(N_patches, Patch_size_squared))
+            
+            safe_coefficient = 10
+            thresh *= safe_coefficient
+
+            safe_indices = 1
+            
+            for idx in range(safe_indices, len(Sigma)):
+                if Sigma[idx] < thresh:
+                    Sigma[idx] = 0
 
             res_clean[i, j] = (U @ np.diag(Sigma)) @ Vt
 

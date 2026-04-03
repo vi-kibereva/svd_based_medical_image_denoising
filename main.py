@@ -44,26 +44,9 @@ def main():
 
 
     now = time.time()
-    res = block_matching(image_matrix_noisy, threshold = 15, block_size=20, window_size=60)
+    res = block_matching(image_matrix_noisy, threshold = 70, block_size=8, window_size=30)
 
     print(f"Block Matching took: {time.time() - now:.2f}s")
-
-    # --- Початок візуалізації ---
-    num_groups_to_show = 3 # Кількість груп для перевірки
-    patches_per_group = 5  # Скільки патчів з кожної групи показати
-
-    # for i, group in enumerate(res[:num_groups_to_show]):
-    #     K = min(len(group), patches_per_group)
-    #     fig, axes = plt.subplots(1, K, figsize=(K * 2, 2))
-    #     if K == 1: axes = [axes] # обробка випадку з 1 патчем
-        
-    #     for j in range(K):
-    #         axes[j].imshow(group[j], cmap='gray')
-    #         axes[j].axis('off')
-            
-    #     fig.suptitle(f"Group {i+1}")
-    #     plt.show()
-    # --- Кінець візуалізації ---
 
     print("Starting SVD Denoising...")
     svd_start = time.time()
@@ -72,7 +55,7 @@ def main():
 
     print(f"SVD Denoising took: {time.time() - svd_start:.2f}s")
 
-    clean_image = aggregate_patches(res_clean, image_matrix.shape, 20)
+    clean_image = aggregate_patches(res_clean, image_matrix.shape, 8)
     clean_image = np.clip(clean_image, 0, 255).astype(np.uint8)
     Image.fromarray(clean_image).save("denoised_result.png")
     print("Saved to denoised_result.png")
