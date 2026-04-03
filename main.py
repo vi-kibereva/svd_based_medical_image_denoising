@@ -30,7 +30,7 @@ def main():
 
 
     now = time.time()
-    res = block_matching(image_matrix_noisy, threshold = 15)
+    res = block_matching(image_matrix_noisy, threshold = 15, block_size=20, window_size=60)
 
     print(f"Block Matching took: {time.time() - now:.2f}s")
 
@@ -58,7 +58,7 @@ def main():
 
     print(f"SVD Denoising took: {time.time() - svd_start:.2f}s")
 
-    clean_image = aggregate_patches(res_clean, image_matrix.shape, patch_size=20)
+    clean_image = aggregate_patches(res_clean, image_matrix.shape, 20)
     clean_image = np.clip(clean_image, 0, 255).astype(np.uint8)
     Image.fromarray(clean_image).save("denoised_result.png")
     print("Saved to denoised_result.png")
