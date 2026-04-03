@@ -8,8 +8,11 @@ def block_matching(matrix: np.ndarray[tuple[int, int], np.dtype[np.int32]],
                    threshold: int, block_size: int = 5, window_size: int = 15):
 
     blocks = npw.sliding_window_view(matrix, window_shape=(block_size, block_size))
-    pad_value = (window_size - block_size) // 2
-    windows = npw.sliding_window_view(np.pad(matrix, pad_width = pad_value, mode="reflect"), window_shape=(window_size, window_size)) # Make sure "reflect" is the best mode
+    pad_before = (window_size - block_size) // 2
+    pad_after = (window_size - block_size) - pad_before
+    
+    pad_width = ((pad_before, pad_after), (pad_before, pad_after))
+    windows = npw.sliding_window_view(np.pad(matrix, pad_width = pad_width, mode="reflect"), window_shape=(window_size, window_size)) # Make sure "reflect" is the best mode
 
     result = np.empty(blocks.shape[:2], dtype=object)
 
