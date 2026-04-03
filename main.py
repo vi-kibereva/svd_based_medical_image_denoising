@@ -9,11 +9,22 @@ import pywt
 import cv2
 import matplotlib.pyplot as plt
 
+
+def estimate_noise_sigma(image_matrix):
+    coeffs = pywt.dwt2(image_matrix, 'db2')
+    LL, (LH, HL, HH) = coeffs
+    
+    mad = np.median(np.abs(HH - np.median(HH)))
+    
+    return mad / 0.6745
+
 PATH_TO_FILE = 'COVID-1017.png'
 def main():
     image = Image.open(PATH_TO_FILE)
     image_matrix = np.array(image, dtype = np.int32, order = "F") # probably need to store in column major
     # image_matrix = cv2.imread(PATH_TO_FILE, cv2.IMREAD_GRAYSCALE)
+
+
     # #take small part
     # h, w = image_matrix.shape
     # image_matrix = image_matrix[h-150:h-50, w-150:w-50].copy()
@@ -25,40 +36,26 @@ def main():
     image_matrix_noisy = add_gaussian_noise(image_matrix, 10)
 
     Image.fromarray(image_matrix_noisy).save("noisy_test_fragment.png")
+
+    estimated_sigma = estimate_noise_sigma(image_matrix_noisy)
+    print(f"Estimated sigma: {estimated_sigma:.2f}")
     
     print("Starting Block Matching...")
 
 
     now = time.time()
-    res = block_matching(image_matrix_noisy, threshold = 15, block_size=20, window_size=60)
+    res = block_matching(image_matrix_noisy, threshold = 70, block_size=8, window_size=30)
 
     print(f"Block Matching took: {time.time() - now:.2f}s")
-
-# --- Початок візуалізації ---
-    num_groups_to_show = 3 # Кількість груп для перевірки
-    patches_per_group = 5  # Скільки патчів з кожної групи показати
-
-    # for i, group in enumerate(res[:num_groups_to_show]):
-    #     K = min(len(group), patches_per_group)
-    #     fig, axes = plt.subplots(1, K, figsize=(K * 2, 2))
-    #     if K == 1: axes = [axes] # обробка випадку з 1 патчем
-        
-    #     for j in range(K):
-    #         axes[j].imshow(group[j], cmap='gray')
-    #         axes[j].axis('off')
-            
-    #     fig.suptitle(f"Group {i+1}")
-    #     plt.show()
-    # --- Кінець візуалізації ---
 
     print("Starting SVD Denoising...")
     svd_start = time.time()
 
-    res_clean = denoising(res)
+    res_clean = denoising(res, estimated_sigma)
 
     print(f"SVD Denoising took: {time.time() - svd_start:.2f}s")
 
-    clean_image = aggregate_patches(res_clean, image_matrix.shape, 20)
+    clean_image = aggregate_patches(res_clean, image_matrix.shape, 8)
     clean_image = np.clip(clean_image, 0, 255).astype(np.uint8)
     Image.fromarray(clean_image).save("denoised_result.png")
     print("Saved to denoised_result.png")
