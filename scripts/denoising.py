@@ -1,29 +1,27 @@
 import numpy as np
-from typing import List
-from joblib import Parallel, delayed
-import matplotlib.pyplot as plt
 
-
-def denoising(res:  np.ndarray[tuple[int, int], np.dtype[np.object_]], sigma): #treshhold probably should be counted energybased
+def denoising(res:  np.ndarray[tuple[int, int], np.dtype[np.object_]], sigma,  safety_coefficient): #treshhold probably should be counted energybased
+    """
+    Applies SVD-based denoising to each group of similar patches.
+    Args:
+        res:                2D object array of noisy patch matrices
+        sigma:              Estimated noise standard deviation
+        safety_coefficient: Multiplier for the thresholding logic
+    Returns:
+        res_clean: 2D object array of denoised patch matrices
+    """
     res_clean = np.empty_like(res)
     for i in range(res.shape[0]):
         for j in range(res.shape[1]):
             M = res[i, j]
-            U, Sigma, Vt = np.linalg.svd(M, full_matrices=False) # це якщо модна з бібліотеки взяти 
-            # n = max(M.shape)
-            # noise_tresh = sigma*np.sqrt(2*np.log(n))
-
-            # noise_tresh*= 2.5
-
-            # Sigma[Sigma < noise_tresh] = 0
+            U, Sigma, Vt = np.linalg.svd(M, full_matrices=False)
 
             N_patches = M.shape[0]
             Patch_size_squared = M.shape[1]
             
             thresh = sigma * np.sqrt(max(N_patches, Patch_size_squared))
             
-            safe_coefficient = 10
-            thresh *= safe_coefficient
+            thresh *= safety_coefficient
 
             safe_indices = 1
             

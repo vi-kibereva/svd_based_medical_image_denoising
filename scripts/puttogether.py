@@ -24,9 +24,6 @@ def aggregate_patches(res_clean, image_shape, patch_size=5):
         for j in range(res_clean.shape[1]):
             M_clean = res_clean[i, j]  # shape: (patch_size^2, num_similar_patches)
 
-            if i + patch_size > H or j + patch_size > W:
-                continue
-
             patch_2d = M_clean.mean(axis=1).reshape(patch_size, patch_size)
 
             image_canvas[i:i+patch_size, j:j+patch_size] += patch_2d * gaussian_mask
