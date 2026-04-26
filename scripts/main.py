@@ -6,15 +6,14 @@ from puttogether import aggregate_patches
 from noising import add_gaussian_noise, add_poisson_noise
 import time
 import pywt
-#import cv2
 import matplotlib.pyplot as plt
 
 
 PATH_TO_FILE = 'assets/COVID-1017.png'
 BLOCK_SIZE = 4
-WINDOW_SIZE = 21
-DISTANCE_THRESHOLD = 8
-SAFETY_COEFFICIENT = 4
+WINDOW_SIZE = 15
+DISTANCE_THRESHOLD = 9
+SAFETY_COEFFICIENT = 3
 
 
 def estimate_noise_sigma(image_matrix):
