@@ -9,11 +9,11 @@ import pywt
 import matplotlib.pyplot as plt
 
 
-PATH_TO_FILE = 'assets/COVID-1017.png'
+PATH_TO_FILE = 'assets/test_set/12.jpg'
 BLOCK_SIZE = 4
 WINDOW_SIZE = 15
 DISTANCE_THRESHOLD = 9
-SAFETY_COEFFICIENT = 3
+SAFETY_COEFFICIENT = 2
 
 
 def estimate_noise_sigma(image_matrix):

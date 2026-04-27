@@ -16,8 +16,8 @@ from noising import add_gaussian_noise
 IMAGE_DIR = 'assets/test_set/'
 BLOCK_SIZE = 4
 WINDOW_SIZE = 21
-DISTANCE_THRESHOLD = 8
-SAFETY_COEFFICIENT = 4
+DISTANCE_THRESHOLD = 9
+SAFETY_COEFFICIENT = 1.5
 NOISE_SIGMA = 25
 
 def estimate_noise_sigma(image_matrix):
