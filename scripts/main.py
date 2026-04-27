@@ -9,7 +9,7 @@ import pywt
 import matplotlib.pyplot as plt
 
 
-PATH_TO_FILE = 'assets/test_set/12.jpg'
+PATH_TO_FILE = '12.jpg'
 BLOCK_SIZE = 4
 WINDOW_SIZE = 15
 DISTANCE_THRESHOLD = 9
@@ -32,12 +32,12 @@ def estimate_noise_sigma(image_matrix):
     return mad / 0.6745
 
 def main():
-    image = Image.open(PATH_TO_FILE)
+    image = Image.open("assets/test_set/" + PATH_TO_FILE)
     image_matrix = np.array(image, dtype = np.int32, order = "F")
     image_matrix_noisy = add_gaussian_noise(image_matrix, 10)
 
 
-    Image.fromarray(image_matrix_noisy).save("assets/noisy_test_fragment.png")
+    Image.fromarray(image_matrix_noisy).save("assets/noisy/" + PATH_TO_FILE + ".png")
 
     estimated_sigma = estimate_noise_sigma(image_matrix_noisy)
     print(f"Estimated sigma: {estimated_sigma:.2f}")
@@ -61,8 +61,8 @@ def main():
     clean_image = aggregate_patches(res_clean, image_matrix.shape, BLOCK_SIZE)
 
     clean_image = np.clip(clean_image, 0, 255).astype(np.uint8)
-    Image.fromarray(clean_image).save("assets/denoised_result.png")
-    print("Saved to denoised_result.png")
+    Image.fromarray(clean_image).save("assets/results/denoised" + PATH_TO_FILE + ".png")
+    print("Saved to results dir")
 
     print(f"Total time: {time.time() - now:.2f}s")
 
