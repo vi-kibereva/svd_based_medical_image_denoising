@@ -5,3 +5,4 @@ PyWavelets
 joblib
 scipy
 numba
+scikit-image

@@ -1,7 +1,7 @@
 import numpy as np
 from PIL import Image
 from block_matching import block_matching
-from denoising import denoising
+from denoising import denoising, custom_denoising
 from puttogether import aggregate_patches
 from noising import add_gaussian_noise, add_poisson_noise
 import time
@@ -9,11 +9,11 @@ import pywt
 import matplotlib.pyplot as plt
 
 
-PATH_TO_FILE = '12.jpg'
+PATH_TO_FILE = '121.jpg'
 BLOCK_SIZE = 4
 WINDOW_SIZE = 15
 DISTANCE_THRESHOLD = 9
-SAFETY_COEFFICIENT = 2
+SAFETY_COEFFICIENT = 1
 
 
 def estimate_noise_sigma(image_matrix):
@@ -54,7 +54,7 @@ def main():
     svd_start = time.time()
 
 
-    res_clean = denoising(res, estimated_sigma, SAFETY_COEFFICIENT)
+    res_clean = custom_denoising(res, estimated_sigma * SAFETY_COEFFICIENT)
 
     print(f"SVD Denoising took: {time.time() - svd_start:.2f}s")
 

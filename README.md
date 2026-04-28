@@ -74,6 +74,8 @@ You can adjust parameters in the scripts:
   - `puttogether.py`: Weighted patch aggregation for image reconstruction.
 - `assets/`: Test datasets and output results.
 
+You can view examples of denoised images in assets/results/ folder.
+
 ## Contributing
 
 This project was developed as part of a Linear Algebra course.

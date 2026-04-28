@@ -4,7 +4,6 @@ import pandas as pd
 from PIL import Image
 import time
 import pywt
-import matplotlib.pyplot as plt
 from skimage.metrics import peak_signal_noise_ratio as psnr
 from skimage.metrics import structural_similarity as ssim
 
@@ -17,7 +16,7 @@ IMAGE_DIR = 'assets/test_set/'
 BLOCK_SIZE = 4
 WINDOW_SIZE = 21
 DISTANCE_THRESHOLD = 9
-SAFETY_COEFFICIENT = 1.5
+SAFETY_COEFFICIENT = 1
 NOISE_SIGMA = 25
 
 def estimate_noise_sigma(image_matrix):
